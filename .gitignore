@@ -3,7 +3,4 @@ dist
 .vite
 *.local
 .DS_Store
-dexie-cloud.json
 dexie-cloud.key
-*.dexie-cloud*
-.dexie-cloud*
