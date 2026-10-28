@@ -5,7 +5,20 @@
 @theme {
   --font-sans:
     'Inter Variable', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-  --font-serif: 'Newsreader Variable', ui-serif, Georgia, Cambria, 'Times New Roman', serif;
+  --font-serif: 'Lora', ui-serif, Georgia, Cambria, 'Times New Roman', serif;
+
+  /* Accent palette built around #366D99. */
+  --color-brand-50: #f0f6fa;
+  --color-brand-100: #dcebf6;
+  --color-brand-200: #bfd9eb;
+  --color-brand-300: #93bedb;
+  --color-brand-400: #5f9cc4;
+  --color-brand-500: #4383ad;
+  --color-brand-600: #366d99;
+  --color-brand-700: #2d5a7f;
+  --color-brand-800: #294c6a;
+  --color-brand-900: #263f57;
+  --color-brand-950: #192a3a;
 }
 
 @layer base {
@@ -15,9 +28,15 @@
     text-rendering: optimizeLegibility;
   }
 
+  html,
+  body {
+    height: 100%;
+    overflow: hidden;
+    overscroll-behavior: none;
+  }
+
   body {
     @apply bg-white text-neutral-900;
-    min-height: 100dvh;
     font-family: var(--font-sans);
   }
 
@@ -26,7 +45,7 @@
   }
 
   ::selection {
-    @apply bg-orange-600 text-white;
+    @apply bg-brand-600 text-white;
   }
 
   button,
@@ -36,11 +55,22 @@
   }
 
   :focus-visible {
-    @apply outline-2 outline-offset-2 outline-orange-600;
+    @apply outline-2 outline-offset-2 outline-brand-600;
   }
 }
 
 @layer utilities {
+  .scrollbar-none {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
+  }
+
   .scrollbar-thin {
     scrollbar-width: thin;
     scrollbar-color: var(--color-neutral-300) transparent;

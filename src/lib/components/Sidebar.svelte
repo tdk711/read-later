@@ -41,7 +41,7 @@
 >
   <div class="flex h-16 shrink-0 items-center gap-3 px-5">
     <div
-      class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-orange-600 text-white shadow-sm shadow-orange-600/20"
+      class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-brand-600 text-white shadow-sm shadow-brand-600/20"
     >
       <Icon name="bookmark" size={18} strokeWidth={2} />
     </div>
@@ -76,7 +76,7 @@
         class="group flex h-11 items-center gap-3 rounded-xl px-3 text-sm font-medium transition-colors {collapsed
           ? 'md:justify-center md:px-0'
           : ''} {active
-          ? 'bg-orange-50 text-orange-700 dark:bg-orange-500/10 dark:text-orange-400'
+          ? 'bg-brand-50 text-brand-700 dark:bg-brand-500/10 dark:text-brand-400'
           : 'text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-900 dark:hover:text-white'}"
         onclick={() => onNavigate(item.id)}
         aria-current={active ? 'page' : undefined}
@@ -86,7 +86,7 @@
         <span class="truncate {labelClass()}">{item.label}</span>
         <span
           class="ml-auto min-w-6 rounded-full px-1.5 py-0.5 text-center text-[11px] font-semibold tabular-nums {labelClass()} {active
-            ? 'bg-white text-orange-700 dark:bg-orange-500/15 dark:text-orange-300'
+            ? 'bg-white text-brand-700 dark:bg-brand-500/15 dark:text-brand-300'
             : 'bg-neutral-100 text-neutral-600 dark:bg-neutral-900 dark:text-neutral-400'}">{countFor(
             item.id
           )}</span>
@@ -133,7 +133,7 @@
       <span
         class="ml-auto flex h-5 w-9 shrink-0 items-center rounded-full p-0.5 transition-colors {labelClass()} {theme ===
         'dark'
-          ? 'bg-orange-600'
+          ? 'bg-brand-600'
           : 'bg-neutral-300'}"
         aria-hidden="true"
       >

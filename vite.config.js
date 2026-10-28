@@ -14,9 +14,9 @@ export default defineConfig({
       injectRegister: 'auto',
       includeAssets: ['favicon.svg', 'apple-touch-icon.png'],
       manifest: {
-        name: 'Read It Later',
+        name: 'Read-It-Later',
         short_name: 'Read Later',
-        description: 'A quiet place to save links for later.',
+        description: 'A simple read-it-later PWA',
         theme_color: '#ffffff',
         background_color: '#ffffff',
         display: 'standalone',

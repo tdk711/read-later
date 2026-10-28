@@ -27,8 +27,8 @@
   <button
     type="button"
     class="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full border transition-colors {read
-      ? 'border-orange-600 bg-orange-600 text-white dark:border-orange-500 dark:bg-orange-500'
-      : 'border-neutral-400 text-transparent hover:border-orange-600 hover:text-orange-600/30 dark:border-neutral-500 dark:hover:border-orange-500 dark:hover:text-orange-500/30'}"
+      ? 'border-brand-600 bg-brand-600 text-white dark:border-brand-500 dark:bg-brand-500'
+      : 'border-neutral-400 text-transparent hover:border-brand-600 hover:text-brand-600/30 dark:border-neutral-500 dark:hover:border-brand-500 dark:hover:text-brand-500/30'}"
     onclick={() => onToggleStatus(article.id, read ? 'unread' : 'read')}
     aria-label={read ? `Mark “${title}” as unread` : `Mark “${title}” as read`}
     aria-pressed={read}
@@ -68,7 +68,7 @@
 
     <span class="min-w-0 flex-1">
       <span
-        class="block font-serif text-[19px] font-medium leading-snug tracking-[-0.01em] transition-colors group-hover:text-orange-700 dark:group-hover:text-orange-400 {read
+        class="block break-words [overflow-wrap:anywhere] font-serif text-[19px] font-medium leading-snug tracking-[-0.01em] transition-colors group-hover:text-brand-700 dark:group-hover:text-brand-400 {read
           ? 'text-neutral-500 dark:text-neutral-400'
           : 'text-neutral-900 dark:text-neutral-100'}"
       >

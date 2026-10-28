@@ -4,3 +4,4 @@ dist
 *.local
 .DS_Store
 dexie-cloud.key
+read-it-later.code-workspace

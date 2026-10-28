@@ -34,7 +34,7 @@
   function alertClass(type) {
     if (type === 'error') return 'border-red-200 bg-red-50 text-red-700 dark:border-red-500/30 dark:bg-red-500/10 dark:text-red-300';
     if (type === 'warning') return 'border-amber-200 bg-amber-50 text-amber-800 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-300';
-    return 'border-orange-200 bg-orange-50 text-orange-800 dark:border-orange-500/30 dark:bg-orange-500/10 dark:text-orange-300';
+    return 'border-brand-200 bg-brand-50 text-brand-800 dark:border-brand-500/30 dark:bg-brand-500/10 dark:text-brand-300';
   }
 
   async function startLogin(event) {
@@ -43,7 +43,7 @@
 
     const address = email.trim();
     if (!address) {
-      errorMessage = 'Enter your email address first.';
+      errorMessage = 'Please enter your email address';
       return;
     }
 
@@ -89,18 +89,18 @@
 </script>
 
 <div
-  class="flex min-h-dvh items-center justify-center bg-white px-4 py-10 text-neutral-900 dark:bg-black dark:text-neutral-100"
+  class="flex h-dvh items-center justify-center overflow-y-auto overflow-x-hidden bg-white px-4 py-10 text-neutral-900 scrollbar-none dark:bg-black dark:text-neutral-100"
 >
   <div class="w-full max-w-sm">
     <div class="mb-8 flex flex-col items-center text-center">
       <div
-        class="flex h-12 w-12 items-center justify-center rounded-2xl bg-orange-600 text-white shadow-sm shadow-orange-600/25"
+        class="flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-600 text-white shadow-sm shadow-brand-600/25"
       >
         <Icon name="bookmark" size={22} strokeWidth={2} />
       </div>
       <h1 class="mt-4 font-serif text-3xl font-medium tracking-tight">Read It Later</h1>
       <p class="mt-1.5 text-sm text-neutral-500 dark:text-neutral-400">
-        A quiet place for the things you want to come back to.
+        A simple read-it-later PWA.
       </p>
     </div>
 
@@ -152,14 +152,14 @@
               <input
                 id={`login-${name}`}
                 type={field.type === 'otp' ? 'text' : field.type === 'password' ? 'password' : 'email'}
-                inputmode={field.type === 'otp' ? 'numeric' : undefined}
+                inputmode={field.type === 'otp' ? 'text' : undefined}
                 autocomplete={field.type === 'otp' ? 'one-time-code' : 'email'}
                 autocapitalize="off"
                 spellcheck="false"
                 maxlength={field.type === 'otp' ? '8' : '254'}
                 placeholder={field.placeholder ?? ''}
                 bind:value={values[name]}
-                class="mt-1.5 h-11 w-full rounded-2xl border border-neutral-200 bg-neutral-50 px-4 text-[15px] text-neutral-900 placeholder:text-neutral-400 transition focus:border-orange-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-orange-500/10 dark:border-neutral-800 dark:bg-neutral-900 dark:text-white dark:placeholder:text-neutral-500 dark:focus:border-orange-500 dark:focus:bg-neutral-900"
+                class="mt-1.5 h-11 w-full rounded-2xl border border-neutral-200 bg-neutral-50 px-4 text-[15px] text-neutral-900 placeholder:text-neutral-400 transition focus:border-brand-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-brand-500/10 dark:border-neutral-800 dark:bg-neutral-900 dark:text-white dark:placeholder:text-neutral-500 dark:focus:border-brand-500 dark:focus:bg-neutral-900"
               />
             </label>
           {/each}
@@ -167,7 +167,7 @@
           <button
             type="submit"
             disabled={busy}
-            class="mt-5 inline-flex h-11 w-full items-center justify-center gap-2 rounded-full bg-orange-700 px-5 text-sm font-semibold text-white shadow-sm shadow-orange-700/20 transition hover:bg-orange-800 disabled:cursor-not-allowed disabled:opacity-60"
+            class="mt-5 inline-flex h-11 w-full items-center justify-center gap-2 rounded-full bg-brand-700 px-5 text-sm font-semibold text-white shadow-sm shadow-brand-700/20 transition hover:bg-brand-800 disabled:cursor-not-allowed disabled:opacity-60"
           >
             {#if busy}
               <svg
@@ -204,7 +204,7 @@
       {:else}
         <h2 class="font-serif text-xl font-medium tracking-tight">Sign in</h2>
         <p class="mt-1.5 text-sm leading-relaxed text-neutral-500 dark:text-neutral-400">
-          Enter your email and we'll send you a one-time code. No password needed.
+          Enter your email to receive an OTP.
         </p>
 
         <form class="mt-5" onsubmit={startLogin}>
@@ -222,7 +222,7 @@
               spellcheck="false"
               maxlength="254"
               placeholder="you@example.com"
-              class="mt-1.5 h-11 w-full rounded-2xl border border-neutral-200 bg-neutral-50 px-4 text-[15px] text-neutral-900 placeholder:text-neutral-400 transition focus:border-orange-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-orange-500/10 dark:border-neutral-800 dark:bg-neutral-900 dark:text-white dark:placeholder:text-neutral-500 dark:focus:border-orange-500 dark:focus:bg-neutral-900"
+              class="mt-1.5 h-11 w-full rounded-2xl border border-neutral-200 bg-neutral-50 px-4 text-[15px] text-neutral-900 placeholder:text-neutral-400 transition focus:border-brand-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-brand-500/10 dark:border-neutral-800 dark:bg-neutral-900 dark:text-white dark:placeholder:text-neutral-500 dark:focus:border-brand-500 dark:focus:bg-neutral-900"
             />
           </label>
 
@@ -235,7 +235,7 @@
           <button
             type="submit"
             disabled={busy}
-            class="mt-5 inline-flex h-11 w-full items-center justify-center gap-2 rounded-full bg-orange-700 px-5 text-sm font-semibold text-white shadow-sm shadow-orange-700/20 transition hover:bg-orange-800 disabled:cursor-not-allowed disabled:opacity-60"
+            class="mt-5 inline-flex h-11 w-full items-center justify-center gap-2 rounded-full bg-brand-700 px-5 text-sm font-semibold text-white shadow-sm shadow-brand-700/20 transition hover:bg-brand-800 disabled:cursor-not-allowed disabled:opacity-60"
           >
             {#if busy}
               <svg

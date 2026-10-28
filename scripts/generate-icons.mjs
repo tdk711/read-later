@@ -11,7 +11,7 @@ const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const outputDir = join(root, 'public', 'icons');
 mkdirSync(outputDir, { recursive: true });
 
-const BACKGROUND = [234, 88, 12]; // orange-600
+const BACKGROUND = [54, 109, 153]; // orange-600 54, 109, 153
 const FOREGROUND = [255, 255, 255];
 
 function crc32(buffer) {

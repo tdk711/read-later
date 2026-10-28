@@ -125,7 +125,7 @@
           autocapitalize="off"
           spellcheck="false"
           placeholder="https://example.com/good-read"
-          class="h-12 w-full rounded-2xl border border-neutral-200 bg-neutral-50 pl-11 pr-4 text-[15px] text-neutral-900 placeholder:text-neutral-500 transition focus:border-orange-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-orange-500/10 dark:border-neutral-800 dark:bg-neutral-900 dark:text-white dark:placeholder:text-neutral-500 dark:focus:border-orange-500 dark:focus:bg-neutral-900"
+          class="h-12 w-full rounded-2xl border border-neutral-200 bg-neutral-50 pl-11 pr-4 text-[15px] text-neutral-900 placeholder:text-neutral-500 transition focus:border-brand-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-brand-500/10 dark:border-neutral-800 dark:bg-neutral-900 dark:text-white dark:placeholder:text-neutral-500 dark:focus:border-brand-500 dark:focus:bg-neutral-900"
         />
       </div>
 
@@ -150,7 +150,7 @@
         <button
           type="submit"
           disabled={saving}
-          class="inline-flex h-10 items-center gap-2 rounded-full bg-orange-700 px-5 text-sm font-semibold text-white shadow-sm shadow-orange-700/20 transition hover:bg-orange-800 disabled:cursor-not-allowed disabled:opacity-60"
+          class="inline-flex h-10 items-center gap-2 rounded-full bg-brand-700 px-5 text-sm font-semibold text-white shadow-sm shadow-brand-700/20 transition hover:bg-brand-800 disabled:cursor-not-allowed disabled:opacity-60"
         >
           {#if saving}
             <svg

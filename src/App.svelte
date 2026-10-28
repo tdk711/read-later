@@ -35,6 +35,7 @@
   let theme = $state(initialTheme());
   let now = $state(Date.now());
   let isMobile = $state(false);
+  let scrollContainer = $state(null);
 
   function initialTheme() {
     if (typeof document === 'undefined') return 'light';
@@ -56,9 +57,9 @@
   const countLabel = $derived.by(() => {
     if (view === 'unread') {
       if (unread.length === 0) return 'All caught up';
-      return `${unread.length} ${unread.length === 1 ? 'article' : 'articles'} waiting`;
+      return `${unread.length} ${unread.length === 1 ? 'article' : 'articles'}`;
     }
-    if (read.length === 0) return 'Nothing finished yet';
+    if (read.length === 0) return '0 articles finished';
     return `${read.length} ${read.length === 1 ? 'article' : 'articles'} read`;
   });
 
@@ -186,7 +187,7 @@
   function navigate(nextView) {
     view = nextView;
     mobileOpen = false;
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    scrollContainer?.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   async function toggleStatus(id, status) {
@@ -221,10 +222,10 @@
   <Login />
 {:else if phase === 'loading' || phase === 'syncing'}
   <div
-    class="flex min-h-dvh flex-col items-center justify-center gap-4 bg-white px-6 text-neutral-900 dark:bg-black dark:text-neutral-100"
+    class="flex h-dvh flex-col items-center justify-center gap-4 bg-white px-6 text-neutral-900 dark:bg-black dark:text-neutral-100"
   >
     <div
-      class="flex h-12 w-12 items-center justify-center rounded-2xl bg-orange-600 text-white shadow-sm shadow-orange-600/25"
+      class="flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-600 text-white shadow-sm shadow-brand-600/25"
     >
       <Icon name="bookmark" size={22} strokeWidth={2} />
     </div>
@@ -248,7 +249,7 @@
   </div>
 {:else if phase === 'error'}
   <div
-    class="flex min-h-dvh flex-col items-center justify-center bg-white px-6 text-center text-neutral-900 dark:bg-black dark:text-neutral-100"
+    class="flex h-dvh flex-col items-center justify-center bg-white px-6 text-center text-neutral-900 dark:bg-black dark:text-neutral-100"
   >
     <div
       class="flex h-12 w-12 items-center justify-center rounded-2xl border border-neutral-200 text-neutral-500 dark:border-neutral-800 dark:text-neutral-400"
@@ -261,7 +262,7 @@
     </p>
     <button
       type="button"
-      class="mt-6 inline-flex h-10 items-center gap-2 rounded-full bg-orange-700 px-5 text-sm font-semibold text-white shadow-sm shadow-orange-700/20 transition hover:bg-orange-800"
+      class="mt-6 inline-flex h-10 items-center gap-2 rounded-full bg-brand-700 px-5 text-sm font-semibold text-white shadow-sm shadow-brand-700/20 transition hover:bg-brand-800"
       onclick={retrySession}
     >
       Try again
@@ -269,7 +270,7 @@
     </button>
   </div>
 {:else}
-<div class="min-h-dvh bg-white text-neutral-900 dark:bg-black dark:text-neutral-100">
+<div class="h-dvh overflow-hidden bg-white text-neutral-900 dark:bg-black dark:text-neutral-100">
   <Sidebar
     {view}
     unreadCount={unread.length}
@@ -298,12 +299,12 @@
   {/if}
 
   <div
-    class="flex min-h-dvh flex-col transition-[margin] duration-300 ease-out {sidebarCollapsed
+    class="flex h-full min-h-0 flex-col transition-[margin] duration-300 ease-out {sidebarCollapsed
       ? 'md:ml-[5.5rem]'
       : 'md:ml-64'}"
   >
     <header
-      class="sticky top-0 z-20 border-b border-neutral-100 bg-white/80 backdrop-blur-xl dark:border-neutral-900 dark:bg-black/80"
+      class="z-20 shrink-0 border-b border-neutral-100 bg-white/80 backdrop-blur-xl dark:border-neutral-900 dark:bg-black/80"
     >
       <div class="mx-auto flex h-16 max-w-3xl items-center gap-3 px-4 sm:px-8">
         <button
@@ -319,64 +320,67 @@
           <h1 class="font-serif text-[26px] font-medium leading-tight tracking-tight">
             {view === 'unread' ? 'Unread' : 'Read'}
           </h1>
-          <p class="text-[11px] font-medium uppercase tracking-[0.08em] text-neutral-500 dark:text-neutral-400">
+          <p
+            class="text-[11px] font-medium uppercase tracking-[0.08em] text-neutral-500 dark:text-neutral-400"
+          >
             {countLabel}
           </p>
         </div>
-
-        {#if view === 'unread'}
-          <button
-            type="button"
-            class="ml-auto flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-orange-600 text-white shadow-sm shadow-orange-600/25 transition hover:bg-orange-700 hover:shadow-md hover:shadow-orange-600/25 active:scale-95"
-            onclick={() => (addOpen = true)}
-            aria-label="Add a link"
-            title="Add a link"
-          >
-            <Icon name="plus" size={21} strokeWidth={2.4} />
-          </button>
-        {/if}
       </div>
     </header>
 
-    <main class="mx-auto flex w-full max-w-3xl flex-1 flex-col px-4 pb-20 pt-5 sm:px-8 sm:pt-6">
-      {#if syncWarning}
-        <p
-          class="mb-4 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-300"
-          role="status"
-        >
-          {syncWarning}
-        </p>
-      {/if}
+    <div bind:this={scrollContainer} class="min-h-0 flex-1 overflow-y-auto overflow-x-hidden scrollbar-none">
+      <main class="mx-auto flex min-h-full w-full max-w-3xl flex-col px-4 pb-28 pt-5 sm:px-8 sm:pt-6">
+        {#if syncWarning}
+          <p
+            class="mb-4 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-300"
+            role="status"
+          >
+            {syncWarning}
+          </p>
+        {/if}
 
-      {#if visible.length === 0}
-        <EmptyState
-          {view}
-          onAction={() => (view === 'unread' ? (addOpen = true) : navigate('unread'))}
-        />
-      {:else}
-        <div class="space-y-2.5">
-          {#each visible as article (article.id)}
-            <div
-              animate:flip={{ duration: 250 }}
-              in:fly={{ y: 6, duration: 220 }}
-              out:fade={{ duration: 140 }}
-            >
-              <ArticleCard
-                {article}
-                {now}
-                onToggleStatus={toggleStatus}
-                onDelete={removeArticle}
-              />
-            </div>
-          {/each}
-        </div>
+        {#if visible.length === 0}
+          <EmptyState
+            {view}
+            onAction={() => (view === 'unread' ? (addOpen = true) : navigate('unread'))}
+          />
+        {:else}
+          <div class="space-y-2.5">
+            {#each visible as article (article.id)}
+              <div
+                animate:flip={{ duration: 250 }}
+                in:fly={{ y: 6, duration: 220 }}
+                out:fade={{ duration: 140 }}
+              >
+                <ArticleCard
+                  {article}
+                  {now}
+                  onToggleStatus={toggleStatus}
+                  onDelete={removeArticle}
+                />
+              </div>
+            {/each}
+          </div>
 
-        <p class="mt-10 text-center text-[11px] text-neutral-500 dark:text-neutral-500">
-          Synced privately across your signed-in devices
-        </p>
-      {/if}
-    </main>
+          <p class="mt-10 text-center text-[11px] text-neutral-500 dark:text-neutral-500">
+            Synced privately across your signed-in devices
+          </p>
+        {/if}
+      </main>
+    </div>
   </div>
+
+  <button
+    type="button"
+    class="fixed right-4 z-30 flex h-14 w-14 items-center justify-center rounded-full bg-brand-600 text-white shadow-lg shadow-brand-600/30 transition hover:bg-brand-700 hover:shadow-xl hover:shadow-brand-600/30 active:scale-95 sm:right-8"
+    style="bottom: calc(1.25rem + env(safe-area-inset-bottom));"
+    onclick={() => (addOpen = true)}
+    aria-label="Add a link"
+    title="Add a link"
+  >
+    <Icon name="plus" size={24} strokeWidth={2.4} />
+  </button>
 
   {#if addOpen}
     <AddArticleModal onClose={() => (addOpen = false)} onAdded={handleAdded} />
