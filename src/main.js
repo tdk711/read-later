@@ -1,5 +1,5 @@
 import '@fontsource-variable/inter';
-import '@fontsource-variable/newsreader';
+import '@fontsource-variable/lora';
 import './app.css';
 import { mount } from 'svelte';
 import App from './App.svelte';

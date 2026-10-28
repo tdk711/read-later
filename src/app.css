@@ -5,7 +5,7 @@
 @theme {
   --font-sans:
     'Inter Variable', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-  --font-serif: 'Lora', ui-serif, Georgia, Cambria, 'Times New Roman', serif;
+  --font-serif: 'Lora Variable', Lora, ui-serif, Georgia, Cambria, 'Times New Roman', serif;
 
   /* Accent palette built around #366D99. */
   --color-brand-50: #f0f6fa;
