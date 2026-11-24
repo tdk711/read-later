@@ -9,12 +9,11 @@
     mobileOpen = false,
     theme = 'light',
     inert = false,
-    userEmail = '',
-    signingOut = false,
+    locking = false,
     onNavigate,
     onToggleCollapse,
     onToggleTheme,
-    onSignOut,
+    onLock,
     onCloseMobile,
   } = $props();
 
@@ -95,27 +94,25 @@
   </nav>
 
   <div class="mt-auto border-t border-neutral-100 p-3 dark:border-neutral-900">
-    {#if userEmail}
-      <p
-        class="truncate px-3 pb-1 text-[11px] text-neutral-500 dark:text-neutral-500 {labelClass()}"
-        title={userEmail}
-      >
-        {userEmail}
-      </p>
-    {/if}
+    <p
+      class="truncate px-3 pb-1 text-[11px] text-neutral-500 dark:text-neutral-500 {labelClass()}"
+      title="Your library syncs privately across unlocked devices"
+    >
+      Synced privately
+    </p>
 
     <button
       type="button"
       class="flex h-11 w-full items-center gap-3 rounded-xl px-3 text-sm font-medium text-neutral-600 transition-colors hover:bg-neutral-100 hover:text-neutral-900 disabled:cursor-not-allowed disabled:opacity-60 {collapsed
         ? 'md:justify-center md:px-0'
         : ''} dark:text-neutral-400 dark:hover:bg-neutral-900 dark:hover:text-white"
-      onclick={onSignOut}
-      disabled={signingOut}
-      aria-label="Sign out"
-      title={collapsed ? 'Sign out' : undefined}
+      onclick={onLock}
+      disabled={locking}
+      aria-label="Lock library"
+      title={collapsed ? 'Lock library' : undefined}
     >
-      <Icon name="log-out" size={19} />
-      <span class="{labelClass()}">{signingOut ? 'Signing out…' : 'Sign out'}</span>
+      <Icon name="lock" size={19} />
+      <span class="{labelClass()}">{locking ? 'Locking…' : 'Lock library'}</span>
     </button>
 
     <button

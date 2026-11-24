@@ -1,4 +1,4 @@
-import { db } from './db.js';
+import { updateArticleTitle } from './db.js';
 
 /**
  * Page titles are fetched through public metadata services because browsers
@@ -103,7 +103,7 @@ export async function enrichArticle(id, url) {
   if (!title) return;
 
   try {
-    await db.articles.update(id, { title });
+    await updateArticleTitle(id, title);
   } catch (error) {
     console.error('Could not save the page title', error);
   }

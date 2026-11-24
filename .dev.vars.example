@@ -1,0 +1,9 @@
+# Local-only Worker secrets for `npm run worker:dev`.
+#
+# Copy this file to .dev.vars (gitignored) and paste the token printed by
+# `npm run sync:token`. Never commit the real token.
+SYNC_SECRET=replace-with-the-output-of-npm-run-sync-token
+
+# Optional: comma-separated browser origins allowed to call the API from a
+# different origin. Not needed when the PWA and Worker share a domain.
+# ALLOWED_ORIGIN=http://localhost:5173

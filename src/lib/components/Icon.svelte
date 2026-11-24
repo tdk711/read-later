@@ -85,5 +85,24 @@
     <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
     <polyline points="16 17 21 12 16 7" />
     <line x1="21" x2="9" y1="12" y2="12" />
+  {:else if name === 'lock'}
+    <rect x="3" y="11" width="18" height="10" rx="2" />
+    <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+  {:else if name === 'unlock'}
+    <rect x="3" y="11" width="18" height="10" rx="2" />
+    <path d="M7 11V7a5 5 0 0 1 9.9-1" />
+  {:else if name === 'eye'}
+    <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z" />
+    <circle cx="12" cy="12" r="3" />
+  {:else if name === 'eye-off'}
+    <path d="m3 3 18 18" />
+    <path d="M10.6 5.1A10.9 10.9 0 0 1 12 5c6.5 0 10 7 10 7a17.5 17.5 0 0 1-3.1 4.1" />
+    <path d="M6.4 6.4C3.6 8.2 2 12 2 12s3.5 7 10 7a10.9 10.9 0 0 0 4.2-.8" />
+    <path d="M9.9 9.9a3 3 0 0 0 4.2 4.2" />
+  {:else if name === 'refresh'}
+    <path d="M21 12a9 9 0 0 0-9-9 9.8 9.8 0 0 0-6.7 2.8L3 8" />
+    <path d="M3 3v5h5" />
+    <path d="M3 12a9 9 0 0 0 9 9 9.8 9.8 0 0 0 6.7-2.8L21 16" />
+    <path d="M21 21v-5h-5" />
   {/if}
 </svg>

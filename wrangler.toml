@@ -1,0 +1,28 @@
+# Cloudflare Workers configuration for the Read-It-Later PWA.
+#
+# The Worker serves the built SPA from ./dist and exposes the sync API under
+# /api/*. The D1 binding matches the database that was already created.
+#
+# Secrets (set with `npx wrangler secret put SYNC_SECRET`) are intentionally not
+# stored in this file.
+
+name = "read-it-later"
+main = "worker/index.js"
+compatibility_date = "2026-11-01"
+
+[assets]
+directory = "./dist"
+binding = "ASSETS"
+not_found_handling = "single-page-application"
+# Every request reaches the Worker so /api/* can be authenticated. Non-API
+# requests are passed straight through to the static asset handler.
+run_worker_first = true
+
+[[d1_databases]]
+binding = "bookmarks_db"
+database_name = "bookmarks-db"
+database_id = "af78fbf6-d8f6-495e-ba96-0a643c2519ba"
+migrations_dir = "migrations"
+
+[observability]
+enabled = true

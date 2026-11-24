@@ -1,7 +1,7 @@
 <script>
   import { cubicOut } from 'svelte/easing';
   import { fade, scale } from 'svelte/transition';
-  import { db, addArticle } from '../db.js';
+  import { db, addArticle, setArticleStatus } from '../db.js';
   import { normaliseUrl } from '../utils.js';
   import Icon from './Icon.svelte';
 
@@ -36,9 +36,9 @@
     try {
       const existing = await db.articles.where('url').equals(url).first();
 
-      if (existing) {
+      if (existing && !existing.deleted) {
         if (existing.status === 'read') {
-          await db.articles.update(existing.id, { status: 'unread' });
+          await setArticleStatus(existing.id, 'unread');
           onClose();
         } else {
           error = 'This link is already in your unread list.';

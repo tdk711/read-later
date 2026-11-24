@@ -4,29 +4,33 @@
   import { flip } from 'svelte/animate';
   import {
     articles,
-    currentUser,
-    db,
     deleteArticle,
+    flushPendingChanges,
     migrateLegacyArticles,
-    pullFromCloud,
+    primeClock,
     setArticleStatus,
-    signOut,
+    startSyncLoop,
+    stopSyncLoop,
+    syncNow,
+    syncState,
   } from './lib/db.js';
+  import { auth, lock, restoreSession } from './lib/auth.js';
+  import { UnauthorizedError } from './lib/api.js';
   import { enrichArticle } from './lib/metadata.js';
   import Sidebar from './lib/components/Sidebar.svelte';
   import ArticleCard from './lib/components/ArticleCard.svelte';
   import EmptyState from './lib/components/EmptyState.svelte';
   import AddArticleModal from './lib/components/AddArticleModal.svelte';
-  import Login from './lib/components/Login.svelte';
+  import Unlock from './lib/components/Unlock.svelte';
   import Icon from './lib/components/Icon.svelte';
 
-  // 'loading' while Dexie restores the session, 'login' when signed out,
-  // 'syncing' during the initial pull, then 'ready'.
+  // 'loading' while the session is restored, 'locked' when a PIN is needed,
+  // 'syncing' during the initial pull, 'ready' once the list can render.
   let phase = $state('loading');
   let bootError = $state('');
   let syncWarning = $state('');
-  let activeUserId = null;
-  let signingOut = $state(false);
+  let authError = $state('');
+  let locking = $state(false);
 
   let view = $state('unread');
   let sidebarCollapsed = $state(initialSidebarCollapsed());
@@ -63,64 +67,88 @@
     return `${read.length} ${read.length === 1 ? 'article' : 'articles'} read`;
   });
 
-  // Gate the whole app on Dexie Cloud's session. Once a user is signed in,
-  // finish the initial pull before showing the list so it is never partial.
+  // A background sync can discover that the Worker no longer accepts the
+  // stored token (for example after SYNC_SECRET was rotated). Lock the app and
+  // ask for the PIN again instead of retrying forever.
   $effect(() => {
-    const user = $currentUser;
+    if ($syncState.unauthorized && $auth.unlocked) {
+      lock();
+      authError = 'The sync server rejected this PIN. Enter it again.';
+      phase = 'locked';
+    }
+  });
 
-    if (user.isLoading) return;
-
-    if (!user.isLoggedIn) {
-      activeUserId = null;
-      phase = 'login';
+  async function boot() {
+    const hasToken = restoreSession();
+    if (!hasToken) {
+      phase = 'locked';
       return;
     }
 
-    if (activeUserId === user.userId) return;
-    activeUserId = user.userId;
-    startSession(user.userId);
-  });
+    await startSession();
+  }
 
-  async function startSession(userId) {
+  async function startSession() {
     phase = 'syncing';
     bootError = '';
     syncWarning = '';
 
     try {
-      await pullFromCloud();
+      // Upload anything staged by an older local schema, then reconcile.
+      await primeClock();
       await migrateLegacyArticles();
+      await syncNow();
 
-      if (activeUserId === userId) phase = 'ready';
+      if (!$auth.unlocked) return;
+      phase = 'ready';
     } catch (error) {
-      console.error('Could not sync with Dexie Cloud', error);
-
-      if (activeUserId !== userId) return;
-
-      // A returning user who is offline should still get their cached list.
-      if (db.cloud.schema) {
-        syncWarning = 'Offline — showing the copy saved on this device.';
-        phase = 'ready';
-      } else {
-        bootError = error?.message || 'Could not reach Dexie Cloud.';
-        phase = 'error';
+      if (error instanceof UnauthorizedError) {
+        lock();
+        authError = 'The sync server rejected this PIN. Enter it again.';
+        phase = 'locked';
+        return;
       }
+
+      console.error('Could not sync with the server', error);
+
+      if (error?.name === 'DatabaseClosedError' || error?.name === 'InvalidStateError') {
+        bootError = 'Could not open the local library on this device.';
+        phase = 'error';
+        return;
+      }
+
+      // Offline (or the Worker is unreachable): keep using the local copy.
+      syncWarning =
+        navigator.onLine === false
+          ? 'Offline — showing the copy saved on this device.'
+          : 'Could not reach the sync server — showing the copy saved on this device.';
+      phase = 'ready';
     }
   }
 
-  function retrySession() {
-    if (activeUserId) startSession(activeUserId);
+  function handleUnlocked() {
+    authError = '';
+    startSession();
   }
 
-  async function handleSignOut() {
-    if (signingOut) return;
-    signingOut = true;
+  function retrySession() {
+    if ($auth.unlocked) startSession();
+    else phase = 'locked';
+  }
+
+  async function handleLock() {
+    if (locking) return;
+    locking = true;
 
     try {
-      await signOut();
-    } catch (error) {
-      console.error('Could not sign out', error);
+      await flushPendingChanges();
     } finally {
-      signingOut = false;
+      lock();
+      authError = '';
+      phase = 'locked';
+      mobileOpen = false;
+      addOpen = false;
+      locking = false;
     }
   }
 
@@ -138,7 +166,11 @@
       now = Date.now();
     }, 60_000);
 
+    startSyncLoop();
+    boot();
+
     return () => {
+      stopSyncLoop();
       clearInterval(ticker);
       mobileQuery.removeEventListener('change', updateMobile);
     };
@@ -218,8 +250,8 @@
 
 <svelte:window onkeydown={handleKeydown} />
 
-{#if phase === 'login'}
-  <Login />
+{#if phase === 'locked'}
+  <Unlock initialError={authError} onUnlocked={handleUnlocked} />
 {:else if phase === 'loading' || phase === 'syncing'}
   <div
     class="flex h-dvh flex-col items-center justify-center gap-4 bg-white px-6 text-neutral-900 dark:bg-black dark:text-neutral-100"
@@ -256,7 +288,7 @@
     >
       <Icon name="globe" size={22} strokeWidth={1.6} />
     </div>
-    <h1 class="mt-4 font-serif text-2xl font-medium tracking-tight">Could not sync</h1>
+    <h1 class="mt-4 font-serif text-2xl font-medium tracking-tight">Could not open your library</h1>
     <p class="mt-2 max-w-sm text-sm leading-relaxed text-neutral-500 dark:text-neutral-400">
       {bootError}
     </p>
@@ -278,13 +310,12 @@
     collapsed={sidebarCollapsed}
     {mobileOpen}
     {theme}
-    userEmail={$currentUser.email}
-    {signingOut}
+    {locking}
     inert={isMobile && !mobileOpen}
     onNavigate={navigate}
     onToggleCollapse={toggleSidebar}
     onToggleTheme={toggleTheme}
-    onSignOut={handleSignOut}
+    onLock={handleLock}
     onCloseMobile={() => (mobileOpen = false)}
   />
 
@@ -364,7 +395,7 @@
           </div>
 
           <p class="mt-10 text-center text-[11px] text-neutral-500 dark:text-neutral-500">
-            Synced privately across your signed-in devices
+            Synced privately across your unlocked devices
           </p>
         {/if}
       </main>
